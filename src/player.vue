@@ -1,6 +1,9 @@
 <template>
   <div class="video-player" v-if="reseted">
-    <video class="video-js" ref="video">
+    <audio class="video-js" ref="video" v-if="audio">
+      <track v-for="crtTrack in trackList" :kind="crtTrack.kind" :label="crtTrack.label" :src="crtTrack.src" :srcLang="crtTrack.srcLang" :default="crtTrack.default"/>
+    </audio>
+    <video class="video-js" ref="video" v-else>
       <track v-for="crtTrack in trackList" :kind="crtTrack.kind" :label="crtTrack.label" :src="crtTrack.src" :srcLang="crtTrack.srcLang" :default="crtTrack.default"/>
     </video>
   </div>
@@ -106,6 +109,10 @@
       trackList: {
         type: Array,
         default: () => []
+      },
+      audio: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
@@ -115,12 +122,12 @@
       }
     },
     mounted() {
-      if (!this.player) { 
+      if (!this.player) {
         this.initialize()
       }
     },
     beforeDestroy() {
-      if (this.player) { 
+      if (this.player) {
         this.dispose()
       }
     },
@@ -162,7 +169,7 @@
 
         // videoOptions
         // console.log('videoOptions', videoOptions)
-        
+
         // player
         const self = this
         this.player = videojs(this.$refs.video, videoOptions, function() {
